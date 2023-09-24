@@ -25,8 +25,8 @@ The LinkedIn Skill-Based Content Posting Bot is a Node.js application built with
     - ``npm install newsapi --save``
 
 4. **Configuration:**
-    - Create a **.env** file in the project root directory.
-    - Configure the bot's settings in **config.js**. You can specify the content to be posted, posting times, and other preferences.
+    - Create a ```.env``` file in the project root directory.
+    - Configure the bot's settings in ```config.js```. You can specify the content to be posted, posting times, and other preferences.
 
 5. Run the Bot
     - ```node app.js```
