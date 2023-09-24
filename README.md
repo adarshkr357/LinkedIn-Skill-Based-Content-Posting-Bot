@@ -43,7 +43,7 @@ The bot will automatically log in to LinkedIn, gather user's skills, and post co
 Contributions are welcome! If you'd like to contribute to this project, please follow the standard GitHub fork and pull request workflow.
 
 ## License
-This project is licensed under the MIT License - see the LICENSE.md file for details.
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
 ## Disclaimer
 This project is for educational purposes and should be used responsibly and ethically. The authors of this project are not responsible for any misuse or violations of LinkedIn's terms and conditions.
