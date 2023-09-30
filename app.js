@@ -1,9 +1,9 @@
-require('dotenv').config(); //
+require('dotenv').config();
 
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
-puppeteer.use(StealthPlugin()); //
+puppeteer.use(StealthPlugin());
 
 function capture(userString, first, last, isHtml = false) {
     const regex = new RegExp(`${first}(.*?)${last}`, 's');
@@ -32,8 +32,8 @@ function recursiveCapture(userString, start, final, isHtml = false) {
 (async () => {
 
     const browser = await puppeteer.launch({
-        executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', // When your puppeteer is not able to find your chrome path then use this but make sure to put your chrome path.
-        headless: false
+        executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', // Specify your chrome path.
+        headless: true
     });
     const pages = await browser.pages(); // Get pages
     const page = pages[0]; // Select first page
@@ -47,6 +47,7 @@ function recursiveCapture(userString, start, final, isHtml = false) {
     await page.type('#username', process.env.linkedin_email);
     await page.type('#password', process.env.linkedin_pass);
     await page.click('button[aria-label="Sign in"]');
+    
     let dashboardHttpRequestBlock;
 
     try {
@@ -85,5 +86,24 @@ function recursiveCapture(userString, start, final, isHtml = false) {
     const filtteredSkillSets = [...new Set(skillLists)];
 
     await browser.close();
+    
+    let nextPostTimestamp, firstTime = true;
+
+    while (true) {
+
+        const currentTimestamp = Date.now();
+
+        if (firstTime) {
+            //
+            nextPostTimestamp = currentTimestamp + 24*60*60*1000;  // 24 hours * 60 minutes * 60 seconds * 1000 milliseconds
+            firstTime = false;
+        }
+
+        else if (currentTimestamp >= nextPostTimestamp) {
+            //
+            nextPostTimestamp = currentTimestamp + 24*60*60*1000;  // 24 hours * 60 minutes * 60 seconds * 1000 milliseconds
+        }
+
+    };
 
 })();
