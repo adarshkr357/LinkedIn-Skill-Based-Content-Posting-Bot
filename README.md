@@ -22,7 +22,8 @@ The LinkedIn Skill-Based Content Posting Bot is a Node.js application built with
     - ```cd LinkedIn-Skill-Based-Content-Posting-Bot```
 
 3. **Install Dependencies:**
-    - ``npm install newsapi --save``
+    - ```npm install newsapi --save```
+    - ```npm install dotenv --save```
 
 4. **Configuration:**
     - Create a ```.env``` file in the project root directory.
