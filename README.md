@@ -31,6 +31,9 @@ The LinkedIn Skill-Based Content Posting Bot is a Node.js application built with
     npm install dotenv
     ```
     ```shell
+    npm install axios
+    ```
+    ```shell
     npm install puppeteer-extra
     ```
     ```shell
@@ -54,7 +57,7 @@ The bot will automatically log in to LinkedIn, gather user's skills, and post co
 - Monitor the bot's activity to ensure content is posted as expected.
 
 ## Extra
-- You can visit [scripai](https://scripai.com/linkedin-post) for extra information.
+- You can visit [scripai](https://scripai.com/linkedin-post) for extra information regarding content posting of linkedin and data for ```config.js```.
 - You can also use [mention](https://mention.com/en/linkedin-post-generator/) api to generate linkedIn post's content.
 
 ## Contributing

@@ -1,0 +1,33 @@
+{
+  "name": "linkedin-skill-based-content-posting-bot",
+  "version": "1.0.0",
+  "description": "The LinkedIn Skill-Based Content Posting Bot is a Node.js application built with Puppeteer to automate the daily posting of content on LinkedIn based on thier skills mentioned in LinkedIn. Please use this bot responsibly, respecting LinkedIn's terms of service and ethical considerations.",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AdarshKr357/LinkedIn-Skill-Based-Content-Posting-Bot.git"
+  },
+  "keywords": [
+    "LinkedIn",
+    "Skill-Based",
+    "Content",
+    "Posting",
+    "Bot",
+    "Node.js",
+    "Puppeteer",
+    "Automation",
+    "Daily",
+    "Posting",
+    "Skills",
+    "Gathering"
+  ],
+  "author": "Adarsh Kumar",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AdarshKr357/LinkedIn-Skill-Based-Content-Posting-Bot/issues"
+  },
+  "homepage": "https://github.com/AdarshKr357/LinkedIn-Skill-Based-Content-Posting-Bot#readme"
+}

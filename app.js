@@ -70,7 +70,9 @@ async function getContent() {
                 headers
             });
             break;
-        } catch (e) {
+        }
+        catch (e) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
             continue;
         }
     };
@@ -89,87 +91,95 @@ async function postContent() {
     const pages = await browser.pages();
     const page = pages[0];
 
-    await page.goto("https://www.linkedin.com/login", {
-        waitUntil: 'networkidle0'
-    });
-
-    await page.type('#username', process.env.linkedin_email);
-    await page.type('#password', process.env.linkedin_pass);
-    await page.click('button[aria-label="Sign in"]');
-
-    const loginHttpRequestBlock = await page.waitForResponse(httpRequest => httpRequest.url() == 'https://www.linkedin.com/checkpoint/lg/login-submit');
-
-    if (parseInt(loginHttpRequestBlock.status().toString().substr(0, 1)) != 3) {
-        const loginBlockResponse = await loginHttpRequestBlock.text();
-        if (loginBlockResponse.includes("Wrong email")) {
-            console.error("Incorrect email entered.");
-        } else if (loginBlockResponse.includes("right password")) {
-            console.error("Incorrect password entered.");
-        } else {
-            console.error(`Unknown error occured, here's the response: ${loginBlockResponse}`);
-        };
-        await browser.close();
-        process.exit();
-    };
-
-    let dashboardHttpRequestBlock;
-
     try {
-        dashboardHttpRequestBlock = await page.waitForResponse(httpRequest => httpRequest.url() == 'https://www.linkedin.com/feed/', {
-            timeout: 5000 // Increase it if your connection is slow.
+
+        await page.goto("https://www.linkedin.com/login", {
+            waitUntil: 'networkidle0'
         });
-    } catch (error) {
-        console.error(`Ip banned / Slow connection speed.`);
-        await browser.close();
-        process.exit();
-    };
 
-    const dashboardBlockResponse = await dashboardHttpRequestBlock.text();
+        await page.type('#username', process.env.linkedin_email);
+        await page.type('#password', process.env.linkedin_pass);
+        await page.click('button[aria-label="Sign in"]');
 
-    if (!dashboardBlockResponse.includes('recent_activity_nav_all&quot;,&quot;actionTarget&quot;:&quot;https://www.linkedin.com/')) {
-        console.error(`Unknown error occured, here's the response: ${dashboardBlockResponse}`);
-        await browser.close();
-        process.exit();
-    };
+        const loginHttpRequestBlock = await page.waitForResponse(httpRequest => httpRequest.url() == 'https://www.linkedin.com/checkpoint/lg/login-submit');
 
-    // Add skills automatically in config.js if not found.
-    if (config.skills.length < 1) {
-        const username = capture(dashboardBlockResponse, 'recent_activity_nav_all&quot;,&quot;actionTarget&quot;:&quot;https://www.linkedin.com/', '/recent-activity/&quot;,');
-
-        await page.goto(`https://www.linkedin.com/${username}/details/skills/`);
-
-        const skillHttpRequestBlock = await page.waitForResponse(httpRequest => httpRequest.url().includes('/api/graphql?includeWebMetadata=true&variables=(profileUrn') && httpRequest.url().includes('sectionType:skills'));
-        const skillBlockResponse = await skillHttpRequestBlock.text();
-        await page.goBack();
-
-        if (!skillBlockResponse.includes('"accessibilityText":"Edit ')) {
-            console.error(`Unknown error occured, here's the response: ${skillBlockResponse}`);
+        if (parseInt(loginHttpRequestBlock.status().toString().substr(0, 1)) != 3) {
+            const loginBlockResponse = await loginHttpRequestBlock.text();
+            if (loginBlockResponse.includes("Wrong email")) {
+                console.error("Incorrect email entered.");
+            } else if (loginBlockResponse.includes("right password")) {
+                console.error("Incorrect password entered.");
+            } else {
+                console.error(`Unknown error occured, here's the response: ${loginBlockResponse}`);
+            };
             await browser.close();
             process.exit();
         };
 
-        const skillLists = recursiveCapture(skillBlockResponse, '"accessibilityText":"Edit ', '",');
-        config.skills = [...new Set(skillLists)];
-        updateConfig();
-    };
+        let dashboardHttpRequestBlock;
 
-    await page.waitForSelector('.artdeco-button.artdeco-button--muted.artdeco-button--4.artdeco-button--tertiary.ember-view.share-box-feed-entry__trigger');
-    await page.click('.artdeco-button.artdeco-button--muted.artdeco-button--4.artdeco-button--tertiary.ember-view.share-box-feed-entry__trigger');
+        try {
+            dashboardHttpRequestBlock = await page.waitForResponse(httpRequest => httpRequest.url() == 'https://www.linkedin.com/feed/', {
+                timeout: 5000 // Increase it if your connection is slow.
+            });
+        } catch (error) {
+            console.error(`Ip banned / Slow connection speed.`);
+            await browser.close();
+            process.exit();
+        };
 
-    const checkContentResponse = await getContent();
+        const dashboardBlockResponse = await dashboardHttpRequestBlock.text();
 
-    if (!checkContentResponse) {
-        console.error(`Unknown error occured, here's the response: ${checkContentResponse}`);
+        if (!dashboardBlockResponse.includes('recent_activity_nav_all&quot;,&quot;actionTarget&quot;:&quot;https://www.linkedin.com/')) {
+            console.error(`Unknown error occured, here's the response: ${dashboardBlockResponse}`);
+            await browser.close();
+            process.exit();
+        };
+
+        // Add skills automatically in config.js if not found.
+        if (config.skills.length < 1) {
+            const username = capture(dashboardBlockResponse, 'recent_activity_nav_all&quot;,&quot;actionTarget&quot;:&quot;https://www.linkedin.com/', '/recent-activity/&quot;,');
+
+            await page.goto(`https://www.linkedin.com/${username}/details/skills/`);
+
+            const skillHttpRequestBlock = await page.waitForResponse(httpRequest => httpRequest.url().includes('/api/graphql?includeWebMetadata=true&variables=(profileUrn') && httpRequest.url().includes('sectionType:skills'));
+            const skillBlockResponse = await skillHttpRequestBlock.text();
+            await page.goBack();
+
+            if (!skillBlockResponse.includes('"accessibilityText":"Edit ')) {
+                console.error(`Unknown error occured, here's the response: ${skillBlockResponse}`);
+                await browser.close();
+                process.exit();
+            };
+
+            const skillLists = recursiveCapture(skillBlockResponse, '"accessibilityText":"Edit ', '",');
+            config.skills = [...new Set(skillLists)];
+            updateConfig();
+        };
+
+        await page.waitForSelector('.artdeco-button.artdeco-button--muted.artdeco-button--4.artdeco-button--tertiary.ember-view.share-box-feed-entry__trigger');
+        await page.click('.artdeco-button.artdeco-button--muted.artdeco-button--4.artdeco-button--tertiary.ember-view.share-box-feed-entry__trigger');
+
+        const checkContentResponse = await getContent();
+
+        if (!checkContentResponse) {
+            console.error(`Unknown error occured, here's the response: ${checkContentResponse}`);
+            await browser.close();
+            process.exit();
+        };
+
+        await page.type('.ql-editor', checkContentResponse.substr(2)); // Removing the \n\n from response
+        await page.waitForTimeout(2000); // Wait for button to be clickable
+        await page.click('.share-actions__primary-action.artdeco-button.artdeco-button--2.artdeco-button--primary.ember-view');
+        await browser.close();
+
+        return true;
+    }
+    catch (error) {
+        console.error(`An error occurred: ${error.message}`);
         await browser.close();
         process.exit();
     };
-
-    await page.type('.ql-editor', checkContentResponse.substr(2)); // Removing the \n\n from response
-    await page.waitForTimeout(2000); // Wait for button to be clickable
-    await page.click('.share-actions__primary-action.artdeco-button.artdeco-button--2.artdeco-button--primary.ember-view');
-    await browser.close();
-
-    return true;
 };
 
 (async () => {
@@ -181,6 +191,10 @@ async function postContent() {
             if (checkPostContentBlock) {
                 nextPostTimestamp = (currentTimestamp + ((Math.floor(Math.random() * 2) + 1) * 60 * 60 * 1000)) + 24 * 60 * 60 * 1000; // 24 hours * 60 minutes * 60 seconds * 1000 milliseconds
             };
-        };
+        }
+        const timeToNextPost = nextPostTimestamp - Date.now();
+        if (timeToNextPost > 0) {
+            await new Promise(resolve => setTimeout(resolve, timeToNextPost));
+        }
     };
 })();
