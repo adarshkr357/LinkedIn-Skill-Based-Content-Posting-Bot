@@ -1,4 +1,4 @@
 module.exports = {
   "skills": [],
-  "template": {}
+  "tone": []
 };
