@@ -21,13 +21,13 @@ The LinkedIn Skill-Based Content Posting Bot is a Node.js application built with
     - [Puppeteer](https://www.npmjs.com/package/puppeteer) (Node.js library)
 
 2. **Clone the Repository:**
-    - ```git clone https://github.com/AdarshKr357/LinkedIn-Skill-Based-Content-Posting-Bot.git```
-    - ```cd LinkedIn-Skill-Based-Content-Posting-Bot```
+    - ```shell git clone https://github.com/AdarshKr357/LinkedIn-Skill-Based-Content-Posting-Bot.git```
+    - ```shell cd LinkedIn-Skill-Based-Content-Posting-Bot```
 
 3. **Install Dependencies:**
-    - ```npm install dotenv```
-    - ```npm install puppeteer-extra```
-    - ```npm install puppeteer-extra-plugin-stealth```
+    - ```shell npm install dotenv```
+    - ```shell npm install puppeteer-extra```
+    - ```shell npm install puppeteer-extra-plugin-stealth```
 
 4. **Configuration:**
     - Create a ```.env``` file in the project root directory.
