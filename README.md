@@ -1,16 +1,15 @@
 # LinkedIn Skill-Based Content Posting Bot
 
-The LinkedIn Skill-Based Content Posting Bot is a Node.js application built with Puppeteer to automate the daily posting of content on LinkedIn. This bot logs in to LinkedIn, gathers user's skills from their profile, and posts content based on those skills, scheduling posts for every day. Please use this bot responsibly, respecting LinkedIn's terms of service and ethical considerations.
+The LinkedIn Skill-Based Content Posting Bot is a Node.js application built with Puppeteer to automate the daily posting of content on LinkedIn. This bot logs in to LinkedIn, gathers user's skills from their profile, and posts content based on those skills. Please use this bot responsibly, respecting LinkedIn's terms of service and ethical considerations.
 
 > [!NOTE]
 > Sometimes linkedin sends wrong response, so if you are 100% sure that your email and password are correct then re-run the program.
 
 ## Features
 
-- **Automated Daily Content Posting**: Schedule and post content on LinkedIn every day based on user's skills.
+- **Automated Daily Content Posting**: Post content on LinkedIn every day based on user's skills.
 - **Skill-Based Targeting**: Post content relevant to the skills listed on user's profile.
 - **LinkedIn Login**: Securely log in to your LinkedIn account using Puppeteer.
-- **Customizable Content**: Easily configure the bot to share different types of content.
 - **Error Handling**: Robust error handling to ensure the bot operates smoothly.
 - **GitHub Repository**: Accessible GitHub repository for your bot.
 
@@ -18,7 +17,6 @@ The LinkedIn Skill-Based Content Posting Bot is a Node.js application built with
 
 1. **Prerequisites:**
     - [Node.js](https://nodejs.org/en/download/current) (Latest Version)
-    - [Puppeteer](https://www.npmjs.com/package/puppeteer) (Node.js library)
 
 2. **Clone the Repository:**
     ```shell
@@ -40,15 +38,15 @@ The LinkedIn Skill-Based Content Posting Bot is a Node.js application built with
     ```
 
 4. **Configuration:**
-    - Create a ```.env``` file in the project root directory.
-    - Configure the bot's settings in ```config.js```. You can specify the content to be posted, posting times, and other preferences.
+    - Create a ```.env``` file in the project root directory (app.js directory).
+    - Configure the bot's settings in ```config.js```. You can specify the skills manually or let the program log in to your account and gather skills from their automatically.
 
 5. Run the Bot
     ```shell
     node app.js
     ```
 
-The bot will automatically log in to LinkedIn, gather user's skills, and post content at the scheduled times.
+The bot will automatically log in to LinkedIn, gather user's skills, and post content everyday.
 
 ## Important Notes
 - Respect LinkedIn's Terms of Service and use this bot responsibly.
