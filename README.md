@@ -2,6 +2,9 @@
 
 The LinkedIn Skill-Based Content Posting Bot is a Node.js application built with Puppeteer to automate the daily posting of content on LinkedIn. This bot logs in to LinkedIn, gathers user's skills from their profile, and posts content based on those skills, scheduling posts for every day. Please use this bot responsibly, respecting LinkedIn's terms of service and ethical considerations.
 
+> [!NOTE]
+> Sometimes linkedin sends wrong response, so if you are 100% sure that your email and password are correct then re-run the program.
+
 ## Features
 
 - **Automated Daily Content Posting**: Schedule and post content on LinkedIn every day based on user's skills.
@@ -22,8 +25,9 @@ The LinkedIn Skill-Based Content Posting Bot is a Node.js application built with
     - ```cd LinkedIn-Skill-Based-Content-Posting-Bot```
 
 3. **Install Dependencies:**
-    - ```npm install newsapi --save```
-    - ```npm install dotenv --save```
+    - ```npm install dotenv```
+    - ```npm install puppeteer-extra```
+    - ```npm install puppeteer-extra-plugin-stealth```
 
 4. **Configuration:**
     - Create a ```.env``` file in the project root directory.

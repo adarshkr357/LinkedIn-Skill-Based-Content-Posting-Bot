@@ -1,4 +1,6 @@
 require('dotenv').config();
+const config = require('./config.js');
+const fs = require('fs');
 
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
@@ -29,42 +31,61 @@ function recursiveCapture(userString, start, final, isHtml = false) {
     return matches;
 };
 
-(async () => {
+function updateConfig() {
+    const updatedConfig = JSON.stringify(config, null, 2);  // Serialize the configuration object to JSON
+    fs.writeFileSync('./config.js', `module.exports = ${updatedConfig};`, 'utf-8');
+}
 
+async function getSkillsFromLinkedin() {
     const browser = await puppeteer.launch({
         executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', // Specify your chrome path.
-        headless: true
+        headless: "new"  // Make it false (headless: false) if there are too many errors.
     });
-    const pages = await browser.pages(); // Get pages
-    const page = pages[0]; // Select first page
+    const pages = await browser.pages();
+    const page = pages[0];
 
-    await page.goto("https://www.linkedin.com/login");
-
-    await page.waitForSelector('#username', {
-        visible: true
+    await page.goto("https://www.linkedin.com/login", {
+        waitUntil: 'networkidle0'
     });
 
     await page.type('#username', process.env.linkedin_email);
     await page.type('#password', process.env.linkedin_pass);
     await page.click('button[aria-label="Sign in"]');
+
+    const loginHttpRequestBlock = await page.waitForResponse(httpRequest => httpRequest.url() == 'https://www.linkedin.com/checkpoint/lg/login-submit');
     
+    if (parseInt(loginHttpRequestBlock.status().toString().substr(0, 1)) != 3) {
+        const loginBlockResponse = await loginHttpRequestBlock.text();
+        if (loginBlockResponse.includes("Wrong email")) {
+            console.error("Incorrect email entered.");
+        }
+        else if (loginBlockResponse.includes("right password")) {
+            console.error("Incorrect password entered.");
+        }
+        else {
+            console.error(`Unknown error occured, here's the response: ${loginBlockResponse}`);
+        };
+        await browser.close();
+        process.exit();
+    };
+
     let dashboardHttpRequestBlock;
 
     try {
         dashboardHttpRequestBlock = await page.waitForResponse(httpRequest => httpRequest.url() == 'https://www.linkedin.com/feed/', {
-            timeout: 5000
+            timeout: 5000  // Increase it if your connection is slow.
         });
     }
     catch (error) {
-        console.error(`Invalid login details.`);
+        console.error(`Ip banned / Slow connection speed.`);
         await browser.close();
         process.exit();
     };
-    
+
     const dashboardBlockResponse = await dashboardHttpRequestBlock.text();
 
     if (!dashboardBlockResponse.includes('recent_activity_nav_all&quot;,&quot;actionTarget&quot;:&quot;https://www.linkedin.com/')) {
-        console.error(`Unknown error occured: ${dashboardBlockResponse}`);
+        console.error(`Unknown error occured, here's the response: ${dashboardBlockResponse}`);
         await browser.close();
         process.exit();
     };
@@ -75,31 +96,33 @@ function recursiveCapture(userString, start, final, isHtml = false) {
 
     const skillHttpRequestBlock = await page.waitForResponse(httpRequest => httpRequest.url().includes('/api/graphql?includeWebMetadata=true&variables=(profileUrn') && httpRequest.url().includes('sectionType:skills'));
     const skillBlockResponse = await skillHttpRequestBlock.text();
+    await browser.close();
 
     if (!skillBlockResponse.includes('"accessibilityText":"Edit ')) {
-        console.error(`Unknown error occured: ${skillBlockResponse}`);
+        console.error(`Unknown error occured, here's the response: ${skillBlockResponse}`);
         await browser.close();
         process.exit();
     };
 
     const skillLists = recursiveCapture(skillBlockResponse, '"accessibilityText":"Edit ', '",');
-    const filtteredSkillSets = [...new Set(skillLists)];
+    return [...new Set(skillLists)];
+};
 
-    await browser.close();
-    
-    let nextPostTimestamp, firstTime = true;
+(async () => {
+
+    if (config.skills.length < 1) {
+        config.skills = await getSkillsFromLinkedin();
+        updateConfig();
+        return;
+    };
+
+    let nextPostTimestamp;
 
     while (true) {
 
         const currentTimestamp = Date.now();
 
-        if (firstTime) {
-            //
-            nextPostTimestamp = currentTimestamp + 24*60*60*1000;  // 24 hours * 60 minutes * 60 seconds * 1000 milliseconds
-            firstTime = false;
-        }
-
-        else if (currentTimestamp >= nextPostTimestamp) {
+        if (currentTimestamp >= nextPostTimestamp) {
             //
             nextPostTimestamp = currentTimestamp + 24*60*60*1000;  // 24 hours * 60 minutes * 60 seconds * 1000 milliseconds
         }
