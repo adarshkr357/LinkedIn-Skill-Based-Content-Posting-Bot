@@ -53,6 +53,10 @@ The bot will automatically log in to LinkedIn, gather user's skills, and post co
 - Ensure the content you share complies with LinkedIn's guidelines and regulations.
 - Monitor the bot's activity to ensure content is posted as expected.
 
+## Extra
+- You can visit [scripai](https://scripai.com/linkedin-post) for extra information.
+- You can also use [mention](https://mention.com/en/linkedin-post-generator/) api to generate linkedIn post's content.
+
 ## Contributing
 
 Contributions are welcome! If you'd like to contribute to this project, please follow the standard GitHub fork and pull request workflow.
